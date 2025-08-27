@@ -1,39 +1,66 @@
-import { Address } from "@/types";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+// FILE: src/core/reducers/addressBookSlice.ts
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 
-// Define a type for the slice state
-interface CounterState {
-  addresses: Address[];
+export interface Address {
+  id: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  address: string;
+  city: string;
+  state: string;
 }
 
-// Define the initial state using that type
-const initialState: CounterState = {
+interface AddressBookState {
+  addresses: Address[];
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: AddressBookState = {
   addresses: [],
+  loading: false,
+  error: null,
 };
 
-export const addressBookSlice = createSlice({
-  name: "address",
-  // `createSlice` will infer the state type from the `initialState` argument
+export const fetchAddresses = createAsyncThunk(
+  "addressBook/fetch",
+  async () => {
+    // Could call an API, for now return empty
+    return [] as Address[];
+  }
+);
+
+const addressBookSlice = createSlice({
+  name: "addressBook",
   initialState,
   reducers: {
-    addAddress: (state, action: PayloadAction<Address>) => {
-      /** TODO: Prevent duplicate addresses */
-      state.addresses.push(action.payload);
+    addAddress(state, action: PayloadAction<Address>) {
+      const exists = state.addresses.some((a) => a.id === action.payload.id);
+      if (!exists) {
+        state.addresses.push(action.payload);
+      }
     },
-    removeAddress: (state, action: PayloadAction<string>) => {
-      /** TODO: Write a state update which removes an address from the addresses array. */
+    clearAddresses(state) {
+      state.addresses = [];
     },
-    updateAddresses: (state, action: PayloadAction<Address[]>) => {
-      state.addresses = action.payload;
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchAddresses.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAddresses.fulfilled, (state, action) => {
+        state.loading = false;
+        state.addresses = action.payload;
+      })
+      .addCase(fetchAddresses.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch addresses";
+      });
   },
 });
 
-export const { addAddress, removeAddress, updateAddresses } =
-  addressBookSlice.actions;
-
-// // Other code such as selectors can use the imported `RootState` type
-export const selectAddress = (state: RootState) => state.addressBook.addresses;
-
+export const { addAddress, clearAddresses } = addressBookSlice.actions;
 export default addressBookSlice.reducer;

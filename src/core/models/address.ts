@@ -3,11 +3,14 @@
 export interface AddressModel {
   city: string;
   firstName: string;
-  houseNumber: string;
+  // houseNumber: string;
+  gender: string;
   id: string;
   lastName: string;
-  postcode: string;
-  street: string;
+  address: string;
+  state: string;
+  // postcode: string;
+  //  street: string;
 }
 
 export interface RawAddressModel extends AddressModel {
@@ -16,15 +19,29 @@ export interface RawAddressModel extends AddressModel {
 }
 
 export default function transformAddress(data: RawAddressModel): AddressModel {
-  const { firstName, lastName, city, houseNumber, lat, lon, postcode, street } =
-    data;
+  const {
+    firstName,
+    lastName,
+    city,
+    //    houseNumber,
+    lat,
+    address,
+    lon,
+    //    postcode,
+    state,
+    //   street,
+    gender,
+  } = data;
   return {
     city: city || "",
+    state: state || "",
+    gender: gender || "",
     firstName: firstName || "",
-    houseNumber: houseNumber || "",
+    //   houseNumber: houseNumber || "",
+    address: address || "",
     id: `${lat || Date.now()}_${lon || Math.random()}`,
     lastName: lastName || "",
-    postcode: postcode || "",
-    street: street || "",
+    //   postcode: postcode || "",
+    // street: street || "",
   };
 }

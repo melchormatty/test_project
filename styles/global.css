@@ -1,13 +1,13 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: var(--font-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Courier New", monospace;
 }
 
 /* TODO: Add the 'Roboto' font from Google fonts and add it as a global CSS var called `--font-primary` */
@@ -16,16 +16,14 @@ code {
 */
 
 :root {
-  --border-radius-default: 4px;
-  --border-radius-xl: 15px;
-  --color-accent: #cacfdd;
-  --color-background: #fff;
-  --color-border: #bbb;
+  --font-primary: "Roboto", system-ui, -apple-system, Segoe UI, Roboto,
+    Helvetica, Arial, sans-serif;
   --color-brand: #413ef7;
-  --color-text: #141925;
-  --color-text-light: #72787d;
-  --width-input: 20rem;
-  --width-content: 30rem;
+  --color-accent: #7a7afc;
+  --color-text: #1a1a1a;
+  --color-text-light: #ffffff;
+  --width-input: 420px;
+  --border-radius-default: 12px;
 }
 
 * {
@@ -40,7 +38,13 @@ body {
 }
 
 main {
-  padding: 2rem;
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  main {
+    padding: 2rem 3rem;
+  }
 }
 
 small {

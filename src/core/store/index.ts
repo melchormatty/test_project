@@ -1,16 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import addressBookReducer from "../reducers/addressBookSlice";
-// ...
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
     addressBook: addressBookReducer,
   },
 });
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
+// Types
 export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
 
-export default store;
+// Custom hooks
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

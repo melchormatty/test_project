@@ -1,51 +1,42 @@
+// FILE: src/ui/hooks/useAddressBook.ts
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "../../core/store";
 import {
   addAddress,
-  removeAddress,
-  selectAddress,
-  updateAddresses,
+  clearAddresses,
+  fetchAddresses,
+  Address,
 } from "../../core/reducers/addressBookSlice";
-import { Address } from "@/types";
-import React from "react";
-import { useAppDispatch, useAppSelector } from "../../core/store/hooks";
+import { useCallback } from "react";
 
-import transformAddress, { RawAddressModel } from "../../core/models/address";
-import databaseService from "../../core/services/databaseService";
+export function useAddressBook() {
+  const dispatch = useDispatch<AppDispatch>();
 
-export default function useAddressBook() {
-  const dispatch = useAppDispatch();
-  const addresses = useAppSelector(selectAddress);
-  const [loading, setLoading] = React.useState(true);
+  const { addresses, loading, error } = useSelector(
+    (state: RootState) => state.addressBook
+  );
 
-  const updateDatabase = React.useCallback(() => {
-    databaseService.setItem("addresses", addresses);
-  }, [addresses]);
+  const add = useCallback(
+    (address: Address) => {
+      dispatch(addAddress(address));
+    },
+    [dispatch]
+  );
+
+  const clear = useCallback(() => {
+    dispatch(clearAddresses());
+  }, [dispatch]);
+
+  const fetch = useCallback(() => {
+    dispatch(fetchAddresses());
+  }, [dispatch]);
 
   return {
-    /** Add address to the redux store */
-    addAddress: (address: Address) => {
-      dispatch(addAddress(address));
-      updateDatabase();
-    },
-    /** Remove address by ID from the redux store */
-    removeAddress: (id: string) => {
-      dispatch(removeAddress(id));
-      updateDatabase();
-    },
-    /** Loads saved addresses from the indexedDB */
-    loadSavedAddresses: async () => {
-      const saved: RawAddressModel[] | null = await databaseService.getItem(
-        "addresses"
-      );
-      // No saved item found, exit this function
-      if (!saved || !Array.isArray(saved)) {
-        setLoading(false);
-        return;
-      }
-      dispatch(
-        updateAddresses(saved.map((address) => transformAddress(address)))
-      );
-      setLoading(false);
-    },
+    addresses,
     loading,
+    error,
+    add,
+    clear,
+    fetch,
   };
 }
